@@ -1,0 +1,26 @@
+{
+  "name": "fe-lwn",
+  "version": "1.0.0",
+  "description": "frontend lightweight engine",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fibers": "^5.0.0",
+    "handlebars": "^4.7.6"
+  },
+  "devDependencies": {
+    "webpack": "^5.12.2",
+    "webpack-cli": "^4.3.1",
+    "ts-loader": "^7.0.0",
+    "typescript": "^4.1.3",
+    "reflect-metadata": "^0.1.13"
+  }
+}
