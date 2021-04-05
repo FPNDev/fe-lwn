@@ -72,7 +72,7 @@ export class DirectiveParser {
     }
 
     registerRefs(isComponent: boolean): void {
-        const selfDOM = Reflect.getMetadata(Metadata.ComponentElement, this.component););
+        const selfDOM = Reflect.getMetadata(Metadata.ComponentElement, this.component);
         const parentComponent = Reflect.getMetadata(Metadata.DOMParentComponent, selfDOM);
 
         for (const decorator of getCoreComponentDecorators(MetadataCoreDecorators.DecoratorCoreParent, this.component)) {
