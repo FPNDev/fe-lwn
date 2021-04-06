@@ -58,7 +58,7 @@ function registerCustomElement(decoratorConfig: ComponentConstructor, newClass: 
       const localStyleAttr =`_lwhost-${Math.random().toString(32).substr(2, 8)}`;
       this.setAttribute(localStyleAttr, '');
 
-      this.cssText = cssText.replace(/^((?!['"]+)):host\b/gm, `$1[${localStyleAttr}]`)
+      this.cssText = cssText.replace(/^((?!['"]+)):host\b/gm, `$1[${localStyleAttr}]`);
     }
 
     private initComponent() {

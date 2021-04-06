@@ -8,6 +8,7 @@ import { ChangeDetector } from "./change-detector";
 import { DrawService } from "./draw.service";
 import { getCoreComponentDecorators } from "../decorator/core";
 import { getCustomComponents } from "../decorator/component";
+import { EventPipe } from "../../modules/event-pipe";
 
 const StructuralDirectives = {
     if: structuralIf,
@@ -151,30 +152,30 @@ export class DirectiveParser {
             const isPipe = attributeName[0] === ':';
             const isOut = attributeName[0] === '@';
 
-            if (isPipe || isOut) {
-                // create outs and pipes
+            // create outs and pipes
 
-                let elementComponent = Reflect.getMetadata(Metadata.CustomElementComponent, attribute.ownerElement);
-                if (!elementComponent) {
-                    elementComponent = checkAndRegisterBind(attribute);
-                }
+            let elementComponent = Reflect.getMetadata(Metadata.CustomElementComponent, attribute.ownerElement);
+            if (!elementComponent) {
+                elementComponent = checkAndRegisterBind(attribute);
+            }
 
-                if (elementComponent) {
-                    const bindings = getBindings(
-                        isOut ? 
-                            MetadataBindingTypes.ComponentBindingsOutSet :
-                            MetadataBindingTypes.ComponentBindingsPipeSet,
-                        elementComponent
-                    );
+            if (elementComponent) {
+                const bindings = getBindings(
+                    !isPipe ? 
+                        MetadataBindingTypes.ComponentBindingsOutSet :
+                        MetadataBindingTypes.ComponentBindingsPipeSet,
+                    elementComponent
+                );
 
-                    let thisContext = this.component;
+                let thisContext = this.component;
 
-                    const bindingName = attributeName.slice(1);
+                const bindingName = isPipe || isOut ? attributeName.slice(1) : attributeName;
 
-                    if (bindings.has(bindingName)) {
-                        const childChangeDetector = Reflect.getMetadata(Metadata.ComponentChangeDetectorRef, elementComponent);
+                if (bindings.has(bindingName)) {
+                    const childChangeDetector = Reflect.getMetadata(Metadata.ComponentChangeDetectorRef, elementComponent);
 
-                        if (isOut) {
+                    if (!isPipe) {
+                        if (isOut || !(elementComponent[bindingName] instanceof EventPipe)) {
                             childChangeDetector.onUpdate(bindingName, (change: Change) => {
                                 const context = this.createContext(attribute.ownerElement);
                                 Object.defineProperty(context, '$event', {
@@ -187,32 +188,44 @@ export class DirectiveParser {
                                 }
                             });
                         } else {
-                            const propertyKey = attribute.value;
-
-                            if (elementComponent[bindingName] !== thisContext[propertyKey]) {
-                                if (![undefined, null].includes(thisContext[propertyKey])) {
-                                    elementComponent[bindingName] = thisContext[propertyKey];
-                                } else {
-                                    thisContext[propertyKey] = elementComponent[bindingName];
+                            elementComponent[bindingName].subscribe(emitedValue => {
+                                const context = this.createContext(attribute.ownerElement);
+                                Object.defineProperty(context, '$event', {
+                                    value: emitedValue
+                                });
+                                try {
+                                    lwnEval(attribute.value, context);
                                 }
-                            }
-                            
-                            this.changeDetector.onUpdate(propertyKey, (change: Change) => {
-                                if (elementComponent[bindingName] !== thisContext[propertyKey]) {
-                                    elementComponent[bindingName] = change.new;
-                                }
-                            });
-
-                            childChangeDetector.onUpdate(bindingName, (change: Change) => {
-                                if (elementComponent[bindingName] !== thisContext[propertyKey]) {
-                                    thisContext[propertyKey] = change.new;
+                                catch (e) {
                                 }
                             });
                         }
+                    } else {
+                        const propertyKey = attribute.value;
+
+                        if (elementComponent[bindingName] !== thisContext[propertyKey]) {
+                            if (![undefined, null].includes(thisContext[propertyKey])) {
+                                elementComponent[bindingName] = thisContext[propertyKey];
+                            } else {
+                                thisContext[propertyKey] = elementComponent[bindingName];
+                            }
+                        }
+                        
+                        this.changeDetector.onUpdate(propertyKey, (change: Change) => {
+                            if (elementComponent[bindingName] !== thisContext[propertyKey]) {
+                                elementComponent[bindingName] = change.new;
+                            }
+                        });
+
+                        childChangeDetector.onUpdate(bindingName, (change: Change) => {
+                            if (elementComponent[bindingName] !== thisContext[propertyKey]) {
+                                thisContext[propertyKey] = change.new;
+                            }
+                        });
                     }
+                    
+                    continue;
                 }
-    
-                continue;
             }
 
             attribute.ownerElement[`on${attributeName}`] = $event => {
