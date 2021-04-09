@@ -8,10 +8,12 @@ export enum MetadataBase {
     ComponentDirectiveParser = 'lwn:DirectiveParser',
     ComponentChangeDetectorRef = 'lwn:ChangeDetectorRef',
 
-    CustomElementComponent = 'lwn:ComponentClass',
+    CustomElementComponent = 'lwn:CustomElementComponent',
     ComponentElement = 'lwn:ComponentElement',
 
-    DOMParentComponent = 'lwn:DOMParentComponent'
+    DOMParentComponent = 'lwn:DOMParentComponent',
+    
+    ComponentClass = 'lwn:ComponentClass',
 }
 
 export enum MetadataConfig {

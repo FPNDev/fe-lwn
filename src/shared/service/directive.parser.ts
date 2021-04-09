@@ -126,7 +126,7 @@ export class DirectiveParser {
                     this.changeDetector.forceChange(decorator.propertyKey, resultRefs[decorator.refName.toLowerCase()]);
                 }
 
-                this.changeDetector.runUpdate(false);
+                this.changeDetector.runUpdate(true);
             }
         }
     }

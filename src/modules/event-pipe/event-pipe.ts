@@ -13,7 +13,10 @@ export class EventPipe<T = any> extends Callable {
         }
     }
     subscribe(fn: Function) {
-        this.subscribers.add(new EventPipeSubscription<T>(this, fn));
+        const subscription = new EventPipeSubscription<T>(this, fn);
+        this.subscribers.add(subscription);
+
+        return subscription;
     }
     close() {
         this.subscribers.clear();
@@ -28,7 +31,7 @@ export class EventPipe<T = any> extends Callable {
     }
 }
 
-class EventPipeSubscription<T> {
+export class EventPipeSubscription<T=any> {
     constructor(private pipe: EventPipe, private fn: Function) {}
 
     /** @internal */

@@ -37,7 +37,9 @@ export class ChangeDetector {
 
         this.runUpdateListeners(property, changes[property]);
 
-        LifecycleService.run(LifecycleHooks.Change, [changes], this.componentInstance);
+        if (Reflect.getMetadata(Metadata.ComponentStateActive, this.componentInstance)) {
+            LifecycleService.run(LifecycleHooks.Change, [changes], this.componentInstance);
+        }
     }
 
     markAsTouched(property: string) {
