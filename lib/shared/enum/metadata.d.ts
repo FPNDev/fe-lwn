@@ -6,9 +6,10 @@ export declare enum MetadataBase {
     ComponentDrawService = "lwn:DrawService",
     ComponentDirectiveParser = "lwn:DirectiveParser",
     ComponentChangeDetectorRef = "lwn:ChangeDetectorRef",
-    CustomElementComponent = "lwn:ComponentClass",
+    CustomElementComponent = "lwn:CustomElementComponent",
     ComponentElement = "lwn:ComponentElement",
-    DOMParentComponent = "lwn:DOMParentComponent"
+    DOMParentComponent = "lwn:DOMParentComponent",
+    ComponentClass = "lwn:ComponentClass"
 }
 export declare enum MetadataConfig {
     ComponentConfig = "lwn:DecoratorComponentConfig"
@@ -46,5 +47,6 @@ export declare const Metadata: {
     CustomElementComponent: MetadataBase.CustomElementComponent;
     ComponentElement: MetadataBase.ComponentElement;
     DOMParentComponent: MetadataBase.DOMParentComponent;
+    ComponentClass: MetadataBase.ComponentClass;
 };
 export declare type Metadata = typeof MetadataBase | typeof MetadataBindingTypes | typeof MetadataDOMDecorators | typeof MetadataConfig;

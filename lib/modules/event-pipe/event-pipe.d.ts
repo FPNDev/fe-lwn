@@ -3,12 +3,12 @@ export declare class EventPipe<T = any> extends Callable {
     private subscribers;
     constructor();
     emit(value: T): void;
-    subscribe(fn: Function): void;
+    subscribe(fn: Function): any;
     close(): void;
     unsubscribe(subscription: EventPipeSubscription<T>): void;
     _call(value: T): void;
 }
-declare class EventPipeSubscription<T> {
+export declare class EventPipeSubscription<T = any> {
     private pipe;
     private fn;
     constructor(pipe: EventPipe, fn: Function);
@@ -16,4 +16,3 @@ declare class EventPipeSubscription<T> {
     _emit(value: T): void;
     unsubscribe(): void;
 }
-export {};
